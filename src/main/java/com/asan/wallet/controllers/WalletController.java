@@ -23,7 +23,7 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
     }
 
     @PostMapping("/balance")
-    public Response gwtBalance(@RequestBody Request request){
+    public Response getBalance(@RequestBody Request request){
 
         return service.getBalance(request);
     }
@@ -38,7 +38,7 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
 
     @PostMapping("/deposit")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void diposite(@RequestBody Request request) throws ServiceException {
+    public void deposit(@RequestBody Request request) throws ServiceException {
 
         service.deposit(request);
     }
