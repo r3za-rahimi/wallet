@@ -20,11 +20,6 @@ public class AbstractController<E, D, S extends AbstractService<E, ? extends Jpa
     protected BaseConverter<E, D> converter;
 
 
-    @PostMapping("/transactions")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void getTransaction(@RequestBody Request request) throws ServiceException {
 
-        service.get(request);
-    }
 
 }

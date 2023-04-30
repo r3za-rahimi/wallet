@@ -1,7 +1,8 @@
 package com.asan.wallet.models;
 
 
-import jakarta.persistence.Entity;
+import com.asan.wallet.models.enums.Role;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,9 +16,26 @@ import lombok.Setter;
 public class UserEntity extends AbstractEntity {
 
 
-    private String phoneNumber;
+    @Column(unique = true, nullable = false)
+    private String username;
 
+    @Column(nullable = false)
     private String password;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String accountNumber;
+
+    private Long cardNumber;
+
+    @OneToOne
+    private WalletEntity wallet;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.ORDINAL)
+    private Role role = Role.USER;
 
 
 }
