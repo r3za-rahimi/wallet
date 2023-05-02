@@ -27,22 +27,21 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
         return service.getBalance(request);
     }
 
-    //    @PostMapping("/withdraw")
-    //    @ResponseStatus(HttpStatus.ACCEPTED)
-    //    public void withdraw(@RequestBody Request request) throws ServiceException {
-    //
-    ////        service.withdraw(request);
-    //    }
-    //
-    //
-    //    @PostMapping("/deposit")
-    //    @ResponseStatus(HttpStatus.ACCEPTED)
-    //    public void deposit(@RequestBody Request request) throws ServiceException {
-    //
-    ////        service.deposit(request);
-    //
-    //    }
-//
+        @PostMapping("/withdraw")
+        @ResponseStatus(HttpStatus.ACCEPTED)
+        public void withdraw(@RequestBody Request request) throws ServiceException {
+
+            service.withdraw(request);
+        }
+
+
+        @PostMapping("/deposit")
+        @ResponseStatus(HttpStatus.ACCEPTED)
+        public void deposit(@RequestBody Request request) throws ServiceException {
+
+            service.deposit(request);
+
+        }
 
 
 }

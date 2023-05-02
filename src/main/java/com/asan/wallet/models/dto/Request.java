@@ -13,6 +13,7 @@ public class Request {
 
 
     private String walletId;
+    private String trackingId;
     private Long amount;
     private Date minimumDate;
     private Date maximumDate;

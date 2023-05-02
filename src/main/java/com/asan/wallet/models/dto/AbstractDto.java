@@ -6,7 +6,6 @@ import java.util.Date;
 @Data
 public class AbstractDto {
 
-
     private String id;
 
     private Long version;

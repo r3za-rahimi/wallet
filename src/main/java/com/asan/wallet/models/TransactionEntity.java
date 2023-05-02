@@ -21,7 +21,7 @@ public class TransactionEntity extends AbstractEntity {
 
     private Long amount;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.MERGE ,fetch = FetchType.EAGER)
     private WalletEntity wallet;
 
     @Column(unique = true)
