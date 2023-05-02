@@ -7,9 +7,11 @@ import com.asan.wallet.models.dto.Request;
 import com.asan.wallet.models.enums.DealType;
 import com.asan.wallet.models.enums.TrackingStatus;
 import com.asan.wallet.repositories.TransactionRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -24,8 +26,8 @@ public class TransactionService extends AbstractService<TransactionEntity, Trans
 
     Random random = new Random();
 
-@Transactional
-    public void deposite(Request request) throws ServiceException {
+    @Transactional(rollbackFor = ServiceException.class)
+    public void deposit(Request request) throws ServiceException {
 
 
         WalletEntity wallet = walletService.getWallet(request.getWalletId());
@@ -45,10 +47,14 @@ public class TransactionService extends AbstractService<TransactionEntity, Trans
         switch (num) {
             case 1 -> {
                 transaction.setTrackingStatus(TrackingStatus.SUCCESS);
+                saveTransaction(transaction);
 
             }
             case 2 -> {
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
+                saveTransaction(transaction);
+
+                throw new ServiceException("Unknown_EXEPTION");
 
             }
             case 3 -> {
@@ -56,23 +62,35 @@ public class TransactionService extends AbstractService<TransactionEntity, Trans
                     Thread.sleep(10000);
                     int num2 = getRandomNumber();
                     switch (num2) {
-                        case 1 -> transaction.setTrackingStatus(TrackingStatus.FAILED);
-                        case 2,3 -> transaction.setTrackingStatus(TrackingStatus.SUCCESS);
+                        case 1 -> {
+                            transaction.setTrackingStatus(TrackingStatus.FAILED);
+                            saveTransaction(transaction);
+
+                            throw new ServiceException("Unknown_EXEPTION");
+                        }
+                        case 2, 3 -> {
+                            transaction.setTrackingStatus(TrackingStatus.SUCCESS);
+                            saveTransaction(transaction);
+
+                        }
                     }
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+
             }
         }
 
-        if (transaction.getTrackingStatus() == TrackingStatus.FAILED) {
-            wallet.setBalance(wallet.getBalance() - request.getAmount());
-            transaction.setWallet(wallet);
-        }
 
-        repository.save(transaction);
     }
 
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void saveTransaction(TransactionEntity transaction) {
+        System.out.println(transaction.getTrackingStatus());
+        repository.save(transaction);
+
+    }
 
     public List<TransactionEntity> getTransactions(String id) {
 
@@ -83,7 +101,7 @@ public class TransactionService extends AbstractService<TransactionEntity, Trans
 
     private int getRandomNumber() {
 
-        return random.nextInt(3 - 1 + 1) + 1;
+        return random.nextInt(2 - 1 + 1) + 1;
 
     }
 

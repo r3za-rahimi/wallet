@@ -28,7 +28,7 @@ public class TransactionEntity extends AbstractEntity {
     private String trackingId;
 
     @Enumerated(EnumType.STRING)
-    private TrackingStatus trackingStatus = TrackingStatus.FAILED;
+    private TrackingStatus trackingStatus ;
 
     @Enumerated(EnumType.STRING)
     private DealType dealType;

@@ -32,54 +32,56 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     }
 
 
-    public void withdraw(Request request) throws ServiceException {
 
 
-        WalletEntity wallet = repository.findById(request.getWalletId()).get();
-
-        wallet.setBalance(wallet.getBalance() - request.getAmount());
-
-        int r = getRandomNumber();
-
-        switch (r) {
-
-            case 1 -> {
-                try {
-                    Thread.sleep(60000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            case 2 -> repository.save(wallet);
-            case 3 -> throw new ServiceException("Transaction-Failed");
-        }
-    }
-
-
-    public void deposit(Request request) throws ServiceException {
-
-        WalletEntity wallet = repository.findById(request.getWalletId()).get();
-
-        wallet.setBalance(wallet.getBalance() + request.getAmount());
-
-        int r = getRandomNumber();
-
-        switch (r) {
-
-            case 1 -> {
-                try {
-                    Thread.sleep(6000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            case 2 -> repository.save(wallet);
-            case 3 -> throw new ServiceException("Transaction-Failed");
-        }
-
-    }
-
-
+//    public void withdraw(Request request) throws ServiceException {
+//
+//
+//        WalletEntity wallet = repository.findById(request.getWalletId()).get();
+//
+//        wallet.setBalance(wallet.getBalance() - request.getAmount());
+//
+//        int r = getRandomNumber();
+//
+//        switch (r) {
+//
+//            case 1 -> {
+//                try {
+//                    Thread.sleep(60000);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//            case 2 -> repository.save(wallet);
+//            case 3 -> throw new ServiceException("Transaction-Failed");
+//        }
+//    }
+//
+//
+//    public void deposit(Request request) throws ServiceException {
+//
+//        WalletEntity wallet = repository.findById(request.getWalletId()).get();
+//
+//        wallet.setBalance(wallet.getBalance() + request.getAmount());
+//
+//        int r = getRandomNumber();
+//
+//        switch (r) {
+//
+//            case 1 -> {
+//                try {
+//                    Thread.sleep(6000);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//            case 2 -> repository.save(wallet);
+//            case 3 -> throw new ServiceException("Transaction-Failed");
+//        }
+//
+//    }
+//
+//
 
 
 
