@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 
-public abstract class AbstractService <E,  R extends JpaRepository<E , Long>>{
+public abstract class AbstractService <E,  R extends JpaRepository<E , String>>{
 
     @Autowired
     protected R repository;

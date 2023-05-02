@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface TransactionRepository extends JpaRepository<TransactionEntity , Long> {
+public interface TransactionRepository extends JpaRepository<TransactionEntity , String> {
 
 
-    List<TransactionEntity> findByWallet_Id(Long id);
+    List<TransactionEntity> findByWallet_Id(String id);
 }

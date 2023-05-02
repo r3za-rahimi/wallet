@@ -1,20 +1,19 @@
 package com.asan.wallet.models;
 
 import com.asan.wallet.models.enums.DealType;
-import com.asan.wallet.models.enums.TransactionType;
+import com.asan.wallet.models.enums.TrackingStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
+import java.util.HashMap;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class TransactionEntity extends AbstractEntity {
 
 
@@ -25,8 +24,11 @@ public class TransactionEntity extends AbstractEntity {
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private WalletEntity wallet;
 
+    @Column(unique = true)
+    private String trackingId;
+
     @Enumerated(EnumType.STRING)
-    private TransactionType transactionType;
+    private TrackingStatus trackingStatus = TrackingStatus.FAILED;
 
     @Enumerated(EnumType.STRING)
     private DealType dealType;

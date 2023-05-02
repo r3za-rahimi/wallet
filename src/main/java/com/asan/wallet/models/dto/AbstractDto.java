@@ -7,7 +7,7 @@ import java.util.Date;
 public class AbstractDto {
 
 
-    private Long id;
+    private String id;
 
     private Long version;
 

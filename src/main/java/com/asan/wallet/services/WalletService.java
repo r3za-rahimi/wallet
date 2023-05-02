@@ -1,20 +1,15 @@
 package com.asan.wallet.services;
 
-import com.asan.wallet.exceptionHandler.exceptions.ServiceException;
-import com.asan.wallet.models.TransactionEntity;
+import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
 import com.asan.wallet.models.WalletEntity;
 import com.asan.wallet.models.dto.Request;
 import com.asan.wallet.models.dto.Response;
-import com.asan.wallet.models.dto.TransactionDto;
-import com.asan.wallet.models.dto.WalletDto;
-import com.asan.wallet.models.dto.converters.BaseConverter;
 import com.asan.wallet.repositories.WalletRepository;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class WalletService extends AbstractService<WalletEntity, WalletRepository> {
@@ -22,14 +17,17 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
 
 
-    Random random = new Random();
+    public WalletEntity getWallet(String id) throws ServiceException {
+
+        return repository.findById(id).orElseThrow(() -> new ServiceException("WALLET_NOT_FOUND"));
+    }
 
 
     public Response getBalance(Request request) {
 
         WalletEntity wallet = repository.findById(request.getWalletId()).get();
 
-        return new Response(request.getToken(), wallet.getBalance());
+        return new Response(wallet.getBalance());
 
     }
 
@@ -83,11 +81,8 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
 
 
-    private int getRandomNumber() {
 
-        return random.nextInt(3 - 1 + 1) + 1;
 
-    }
 
 
 }

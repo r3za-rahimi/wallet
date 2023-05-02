@@ -19,8 +19,9 @@ public class WalletEntity extends AbstractEntity {
 
     private Long balance;
 
-    @OneToOne
-    private UserEntity user;
+
+    private String userName;
+
 
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TransactionEntity> transactionEntities;

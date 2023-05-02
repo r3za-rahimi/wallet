@@ -1,4 +1,4 @@
-package com.asan.wallet.exceptionHandler.exceptions;
+package com.asan.wallet.exceptionhandler.exceptions;
 
 public class ServiceException extends Exception  {
 

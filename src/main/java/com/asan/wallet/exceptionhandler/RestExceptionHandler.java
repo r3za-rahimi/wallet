@@ -1,8 +1,8 @@
-package com.asan.wallet.exceptionHandler;
+package com.asan.wallet.exceptionhandler;
 
 
-import com.asan.wallet.exceptionHandler.exceptions.ExceptionResponse;
-import com.asan.wallet.exceptionHandler.exceptions.ServiceException;
+import com.asan.wallet.exceptionhandler.exceptions.ExceptionResponse;
+import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

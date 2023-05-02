@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Response {
 
-    private String token;
+
 
     private Long balance;
 

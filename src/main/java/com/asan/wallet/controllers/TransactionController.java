@@ -1,6 +1,6 @@
 package com.asan.wallet.controllers;
 
-import com.asan.wallet.exceptionHandler.exceptions.ServiceException;
+import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
 import com.asan.wallet.models.TransactionEntity;
 import com.asan.wallet.models.dto.Request;
 import com.asan.wallet.models.dto.TransactionDto;
