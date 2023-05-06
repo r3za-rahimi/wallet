@@ -1,10 +1,7 @@
 package com.asan.wallet.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,7 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "wallet")
+@Builder
 public class WalletEntity extends AbstractEntity {
+
 
 
     private Long balance;

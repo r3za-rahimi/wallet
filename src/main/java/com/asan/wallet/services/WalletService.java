@@ -1,5 +1,6 @@
 package com.asan.wallet.services;
 
+import com.asan.wallet.configuration.amqp.MessagingConfig;
 import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
 import com.asan.wallet.models.TransactionEntity;
 import com.asan.wallet.models.WalletEntity;
@@ -8,13 +9,15 @@ import com.asan.wallet.models.dto.Response;
 import com.asan.wallet.models.enums.DealType;
 import com.asan.wallet.models.enums.TrackingStatus;
 import com.asan.wallet.repositories.WalletRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 public class WalletService extends AbstractService<WalletEntity, WalletRepository> {
@@ -22,6 +25,14 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     @Autowired
     TransactionService transactionService;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+
+    @Autowired
+    private RabbitTemplate template;
+
 
     Random random = new Random();
 
@@ -60,12 +71,15 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
         switch (num) {
             case 1 -> {
                 transaction.setTrackingStatus(TrackingStatus.SUCCESS);
+                sendToKafka();
                 transactionService.saveTransaction(transaction);
 
             }
             case 2 -> {
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
+                sendToKafka();
                 transactionService.saveTransaction(transaction);
+
 
                 throw new ServiceException("Unknown_EXEPTION");
 
@@ -77,11 +91,13 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                     switch (num2) {
                         case 1 -> {
                             transaction.setTrackingStatus(TrackingStatus.FAILED);
+                            sendToKafka();
                             transactionService.saveTransaction(transaction);
                             throw new ServiceException("Unknown_EXEPTION");
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
+                            sendToKafka();
                             transactionService.saveTransaction(transaction);
                         }
                     }
@@ -122,7 +138,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             case 2 -> {
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
                 transactionService.saveTransaction(transaction);
-
+                sendToKafka();
                 throw new ServiceException("Unknown_EXEPTION");
 
             }
@@ -134,10 +150,12 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                         case 1 -> {
                             transaction.setTrackingStatus(TrackingStatus.FAILED);
                             transactionService.saveTransaction(transaction);
+                            sendToKafka();
                             throw new ServiceException("Unknown_EXEPTION");
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
+                            sendToKafka();
                             transactionService.saveTransaction(transaction);
                         }
                     }
@@ -158,10 +176,28 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     }
 
-/** generate TrackingID*/
+    /**
+     * generate TrackingID
+     */
 //    private String generateID() {
 //        return UUID.randomUUID().toString();
 //    }
+//    public void sendToKafka(String message) {
+//
+//        try {
+//            senderAmqp.send();
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//
+//
+////        kafkaTemplate.send("xxauqkuf-default", message);
+//
+//    }
 
+    public void sendToKafka() {
+        template.convertAndSend(MessagingConfig.EXCHANGE, MessagingConfig.ROUTING_KEY, new WalletEntity(15000L , "johnn",new ArrayList<>()));
+    }
 
 }

@@ -6,7 +6,6 @@ import com.asan.wallet.models.dto.Request;
 import com.asan.wallet.models.dto.Response;
 import com.asan.wallet.models.dto.WalletDto;
 import com.asan.wallet.services.WalletService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
