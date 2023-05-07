@@ -15,7 +15,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
@@ -71,13 +70,11 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
         switch (num) {
             case 1 -> {
                 transaction.setTrackingStatus(TrackingStatus.SUCCESS);
-                sendToKafka();
                 transactionService.saveTransaction(transaction);
 
             }
             case 2 -> {
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
-                sendToKafka();
                 transactionService.saveTransaction(transaction);
 
 
@@ -91,13 +88,11 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                     switch (num2) {
                         case 1 -> {
                             transaction.setTrackingStatus(TrackingStatus.FAILED);
-                            sendToKafka();
                             transactionService.saveTransaction(transaction);
                             throw new ServiceException("Unknown_EXEPTION");
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
-                            sendToKafka();
                             transactionService.saveTransaction(transaction);
                         }
                     }
@@ -133,12 +128,12 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             case 1 -> {
                 transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                 transactionService.saveTransaction(transaction);
+                sendToRabit(wallet.getId());
 
             }
             case 2 -> {
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
                 transactionService.saveTransaction(transaction);
-                sendToKafka();
                 throw new ServiceException("Unknown_EXEPTION");
 
             }
@@ -150,13 +145,12 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                         case 1 -> {
                             transaction.setTrackingStatus(TrackingStatus.FAILED);
                             transactionService.saveTransaction(transaction);
-                            sendToKafka();
                             throw new ServiceException("Unknown_EXEPTION");
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
-                            sendToKafka();
                             transactionService.saveTransaction(transaction);
+                            sendToRabit(wallet.getId());
                         }
                     }
                 } catch (InterruptedException e) {
@@ -169,12 +163,18 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     }
 
-
     private int getRandomNumber() {
 
         return random.nextInt(3 - 1 + 1) + 1;
 
     }
+
+
+    public void sendToRabit(String walletId) {
+        template.convertAndSend(MessagingConfig.EXCHANGE, MessagingConfig.ROUTING_KEY,
+                Request.builder().walletId(walletId).build());
+    }
+
 
     /**
      * generate TrackingID
@@ -182,22 +182,4 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 //    private String generateID() {
 //        return UUID.randomUUID().toString();
 //    }
-//    public void sendToKafka(String message) {
-//
-//        try {
-//            senderAmqp.send();
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//
-//
-////        kafkaTemplate.send("xxauqkuf-default", message);
-//
-//    }
-
-    public void sendToKafka() {
-        template.convertAndSend(MessagingConfig.EXCHANGE, MessagingConfig.ROUTING_KEY, new WalletEntity(15000L , "johnn",new ArrayList<>()));
-    }
-
 }

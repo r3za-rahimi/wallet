@@ -16,6 +16,7 @@ import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -50,6 +51,16 @@ class WalletApplicationTests {
 
         WalletEntity wallet = walletService.getWallet(id);
         Assertions.assertThat(wallet).isNotNull();
+    }
+
+    @Test
+    public void depositCallFromWalletService() throws ServiceException {
+
+        WalletEntity baseWallet = walletService.getWallet(id);
+        walletService.deposit(new Request(id, "trackId", 500L, new Date(), new Date()));
+        WalletEntity walletAfterDeposit = walletService.getWallet(id);
+
+        Assertions.assertThat(walletAfterDeposit.getBalance()).isEqualTo(baseWallet.getBalance() + 500L);
     }
 
 
