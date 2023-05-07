@@ -128,7 +128,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             case 1 -> {
                 transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                 transactionService.saveTransaction(transaction);
-                sendToRabit(wallet.getId());
+                sendToRabbit(wallet.getId());
 
             }
             case 2 -> {
@@ -150,7 +150,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                             transactionService.saveTransaction(transaction);
-                            sendToRabit(wallet.getId());
+                            sendToRabbit(wallet.getId());
                         }
                     }
                 } catch (InterruptedException e) {
@@ -170,7 +170,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     }
 
 
-    public void sendToRabit(String walletId) {
+    public void sendToRabbit(String walletId) {
         template.convertAndSend(MessagingConfig.EXCHANGE, MessagingConfig.ROUTING_KEY,
                 Request.builder().walletId(walletId).build());
     }
