@@ -28,16 +28,16 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
 
         @PostMapping("/withdraw")
         @ResponseStatus(HttpStatus.ACCEPTED)
-        public void withdraw(@RequestBody Request request) throws ServiceException {
+        public Response withdraw(@RequestBody Request request) throws ServiceException {
 
-            service.withdraw(request);
+           return service.withdraw(request);
         }
 
         @PostMapping("/deposit")
         @ResponseStatus(HttpStatus.ACCEPTED)
-        public void deposit(@RequestBody Request request) throws ServiceException {
+        public Response deposit(@RequestBody Request request) throws ServiceException {
 
-            service.deposit(request);
+            return service.deposit(request);
 
         }
 

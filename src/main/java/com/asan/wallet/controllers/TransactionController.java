@@ -11,18 +11,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/transactions")
 public class TransactionController extends AbstractController<TransactionEntity , TransactionDto , TransactionService> {
 
 
-    @PostMapping
+    @PostMapping("/transactions")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<TransactionDto> getTransaction(@RequestBody Request request) throws ServiceException {
 
          return converter.convertEntity(service.getTransactions(request.getWalletId()));
     }
 
-    @PostMapping("/between")
+    @PostMapping("/transactions/between")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<TransactionDto> getTransactionBetween(@RequestBody Request request) throws ServiceException {
 

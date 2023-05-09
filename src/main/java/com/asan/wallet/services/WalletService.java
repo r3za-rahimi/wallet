@@ -1,6 +1,5 @@
 package com.asan.wallet.services;
 
-import com.asan.wallet.configuration.amqp.MessagingConfig;
 import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
 import com.asan.wallet.models.TransactionEntity;
 import com.asan.wallet.models.WalletEntity;
@@ -9,7 +8,6 @@ import com.asan.wallet.models.dto.Response;
 import com.asan.wallet.models.enums.DealType;
 import com.asan.wallet.models.enums.TrackingStatus;
 import com.asan.wallet.repositories.WalletRepository;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +22,8 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     @Autowired
     TransactionService transactionService;
 
-
     @Autowired
-    private RabbitTemplate template;
-
+    RabbitService rabbitService;
 
     Random random = new Random();
 
@@ -46,7 +42,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     }
 
     @Transactional(rollbackFor = ServiceException.class)
-    public void deposit(Request request) throws ServiceException {
+    public Response deposit(Request request) throws ServiceException {
 
 
         WalletEntity wallet = getWallet(request.getWalletId());
@@ -67,14 +63,14 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             case 1 -> {
                 transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                 transactionService.saveTransaction(transaction);
+                return new Response(TrackingStatus.SUCCESS);
 
             }
             case 2 -> {
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
                 transactionService.saveTransaction(transaction);
+                return new Response(TrackingStatus.FAILED);
 
-
-                throw new ServiceException("Unknown_EXEPTION");
 
             }
             case 3 -> {
@@ -85,11 +81,12 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                         case 1 -> {
                             transaction.setTrackingStatus(TrackingStatus.FAILED);
                             transactionService.saveTransaction(transaction);
-                            throw new ServiceException("Unknown_EXEPTION");
+                            return new Response(TrackingStatus.FAILED);
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                             transactionService.saveTransaction(transaction);
+                            return new Response(TrackingStatus.SUCCESS);
                         }
                     }
                 } catch (InterruptedException e) {
@@ -97,13 +94,15 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                 }
 
             }
+
         }
 
+        throw new ServiceException("Unknown_Exception");
 
     }
 
     @Transactional(rollbackFor = ServiceException.class)
-    public void withdraw(Request request) throws ServiceException {
+    public Response withdraw(Request request) throws ServiceException {
 
 
         WalletEntity wallet = getWallet(request.getWalletId());
@@ -124,13 +123,14 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             case 1 -> {
                 transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                 transactionService.saveTransaction(transaction);
-                sendToRabbit(wallet.getId());
+                rabbitService.sendToRabbit(wallet.getId());
+                return new Response(TrackingStatus.SUCCESS);
 
             }
             case 2 -> {
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
                 transactionService.saveTransaction(transaction);
-                throw new ServiceException("Unknown_EXEPTION");
+                return new Response(TrackingStatus.FAILED);
 
             }
             case 3 -> {
@@ -141,12 +141,13 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                         case 1 -> {
                             transaction.setTrackingStatus(TrackingStatus.FAILED);
                             transactionService.saveTransaction(transaction);
-                            throw new ServiceException("Unknown_EXEPTION");
+                            return new Response(TrackingStatus.FAILED);
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                             transactionService.saveTransaction(transaction);
-                            sendToRabbit(wallet.getId());
+                            rabbitService.sendToRabbit(wallet.getId());
+                            return new Response(TrackingStatus.SUCCESS);
                         }
                     }
                 } catch (InterruptedException e) {
@@ -157,6 +158,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
         }
 
 
+        throw new ServiceException("Unknown_Exception");
     }
 
     private int getRandomNumber() {
@@ -165,11 +167,6 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     }
 
-
-    public void sendToRabbit(String walletId) {
-        template.convertAndSend(MessagingConfig.EXCHANGE, MessagingConfig.ROUTING_KEY,
-                Request.builder().walletId(walletId).build());
-    }
 
 
     /**
