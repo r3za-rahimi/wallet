@@ -11,7 +11,6 @@ import com.asan.wallet.models.enums.TrackingStatus;
 import com.asan.wallet.repositories.WalletRepository;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +23,6 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     @Autowired
     TransactionService transactionService;
-
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
 
 
     @Autowired
@@ -41,9 +37,9 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     }
 
 
-    public Response getBalance(Request request) {
+    public Response getBalance(Request request) throws ServiceException {
 
-        WalletEntity wallet = repository.findById(request.getWalletId()).get();
+        WalletEntity wallet = getWallet(request.getWalletId());
 
         return new Response(wallet.getBalance());
 
@@ -83,7 +79,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             }
             case 3 -> {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(5000);
                     int num2 = getRandomNumber();
                     switch (num2) {
                         case 1 -> {
@@ -139,7 +135,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             }
             case 3 -> {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(5000);
                     int num2 = getRandomNumber();
                     switch (num2) {
                         case 1 -> {

@@ -14,14 +14,14 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
 
 
     @PostMapping
-    public void createWallet(@RequestBody WalletDto walletDto) {
+    public void createWallet(@RequestBody WalletDto walletDto) throws ServiceException {
 
         service.insert(converter.convertDto(walletDto));
 
     }
 
     @PostMapping("/balance")
-    public Response getBalance(@RequestBody Request request){
+    public Response getBalance(@RequestBody Request request) throws ServiceException {
 
         return service.getBalance(request);
     }
@@ -32,7 +32,6 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
 
             service.withdraw(request);
         }
-
 
         @PostMapping("/deposit")
         @ResponseStatus(HttpStatus.ACCEPTED)

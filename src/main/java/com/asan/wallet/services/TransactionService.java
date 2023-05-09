@@ -37,6 +37,14 @@ public class TransactionService extends AbstractService<TransactionEntity, Trans
     }
 
 
+    public List<TransactionEntity> getTransactionsBetween(Request request) {
+
+        return repository.findByWallet_IdAndDateBetween(request.getWalletId() , request.getMinimumDate() , request.getMaximumDate());
+
+
+    }
+
+
 
 
 }

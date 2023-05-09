@@ -6,22 +6,27 @@ import com.asan.wallet.models.dto.Request;
 import com.asan.wallet.models.dto.TransactionDto;
 import com.asan.wallet.services.TransactionService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/transactions")
 public class TransactionController extends AbstractController<TransactionEntity , TransactionDto , TransactionService> {
 
 
-    @PostMapping("/transactions")
+    @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<TransactionDto> getTransaction(@RequestBody Request request) throws ServiceException {
 
          return converter.convertEntity(service.getTransactions(request.getWalletId()));
+    }
+
+    @PostMapping("/between")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public List<TransactionDto> getTransactionBetween(@RequestBody Request request) throws ServiceException {
+
+        return converter.convertEntity(service.getTransactionsBetween(request));
     }
 
 
