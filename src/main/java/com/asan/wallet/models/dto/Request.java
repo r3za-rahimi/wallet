@@ -13,6 +13,7 @@ import java.util.Date;
 @Builder
 public class Request {
 
+
     private String walletId;
     private String trackingId;
     private Long amount;

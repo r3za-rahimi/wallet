@@ -5,13 +5,17 @@ import com.asan.wallet.models.WalletEntity;
 import com.asan.wallet.models.dto.Request;
 import com.asan.wallet.models.dto.Response;
 import com.asan.wallet.models.dto.WalletDto;
+import com.asan.wallet.services.FeignService;
 import com.asan.wallet.services.WalletService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class WalletController extends AbstractController<WalletEntity, WalletDto, WalletService> {
 
+    @Autowired
+    FeignService authService;
 
     @PostMapping
     public void createWallet(@RequestBody WalletDto walletDto) throws ServiceException {
@@ -29,6 +33,7 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
         @PostMapping("/withdraw")
         @ResponseStatus(HttpStatus.ACCEPTED)
         public Response withdraw(@RequestBody Request request) throws ServiceException {
+
 
            return service.withdraw(request);
         }

@@ -26,7 +26,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     RabbitService rabbitService;
 
     @Autowired
-    AuthService authService;
+    FeignService authService;
     private Random random = new Random();
 
     public WalletEntity getWallet(String id) throws ServiceException {
