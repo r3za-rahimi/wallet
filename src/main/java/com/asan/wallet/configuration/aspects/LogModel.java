@@ -1,4 +1,4 @@
-package com.asan.wallet.aspects;
+package com.asan.wallet.configuration.aspects;
 
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;

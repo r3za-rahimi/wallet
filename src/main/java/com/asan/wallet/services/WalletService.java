@@ -24,9 +24,13 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     @Autowired
     RabbitService rabbitService;
+
+    @Autowired
+    AuthService authService;
     private Random random = new Random();
 
     public WalletEntity getWallet(String id) throws ServiceException {
+
 
         return repository.findById(id).orElseThrow(() -> new ServiceException("WALLET_NOT_FOUND"));
     }

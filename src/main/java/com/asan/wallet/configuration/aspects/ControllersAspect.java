@@ -1,4 +1,4 @@
-package com.asan.wallet.aspects;
+package com.asan.wallet.configuration.aspects;
 
 
 import com.asan.wallet.repositories.LogModelRepository;
