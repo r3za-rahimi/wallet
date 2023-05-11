@@ -1,8 +1,11 @@
 package com.asan.wallet;
 
 import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
+import com.asan.wallet.models.TransactionEntity;
 import com.asan.wallet.models.WalletEntity;
 import com.asan.wallet.models.dto.Request;
+import com.asan.wallet.models.dto.Response;
+import com.asan.wallet.services.TransactionService;
 import com.asan.wallet.services.WalletService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
@@ -17,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -30,6 +35,9 @@ class WalletApplicationTests {
 
     @Autowired
     private WalletService walletService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     String id;
 
@@ -63,5 +71,33 @@ class WalletApplicationTests {
         Assertions.assertThat(walletAfterDeposit.getBalance()).isEqualTo(baseWallet.getBalance() + 500L);
     }
 
+
+    @Test
+    public void walletDeposit() throws ServiceException {
+
+        Response response = walletService.deposit(new Request(id, generateID(), 500L, null, null));
+        Assertions.assertThat(response).isNotNull();
+
+    }
+
+    @Test
+    public void walletWithdraw() throws ServiceException {
+        Response response = walletService.deposit(new Request(id, generateID(), 500L, null, null));
+        Assertions.assertThat(response).isNotNull();
+
+    }
+
+    @Test
+    public void getTransaction() {
+
+
+        List<TransactionEntity> trx = transactionService.getTransactions(id);
+        Assertions.assertThat(trx).isNotNull();
+    }
+
+
+    private String generateID() {
+        return UUID.randomUUID().toString();
+    }
 
 }

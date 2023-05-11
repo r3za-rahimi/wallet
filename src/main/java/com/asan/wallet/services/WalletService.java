@@ -24,8 +24,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     @Autowired
     RabbitService rabbitService;
-
-    Random random = new Random();
+    private Random random = new Random();
 
     public WalletEntity getWallet(String id) throws ServiceException {
 
@@ -67,9 +66,11 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
             }
             case 2 -> {
+
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
                 transactionService.saveTransaction(transaction);
-                return new Response(TrackingStatus.FAILED);
+                throw  new ServiceException("Unknown_Exception");
+
 
 
             }
@@ -81,7 +82,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                         case 1 -> {
                             transaction.setTrackingStatus(TrackingStatus.FAILED);
                             transactionService.saveTransaction(transaction);
-                            return new Response(TrackingStatus.FAILED);
+                            throw  new ServiceException("Unknown_Exception");
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
@@ -130,7 +131,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             case 2 -> {
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
                 transactionService.saveTransaction(transaction);
-                return new Response(TrackingStatus.FAILED);
+                throw  new ServiceException("Unknown_Exception");
 
             }
             case 3 -> {
@@ -141,7 +142,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                         case 1 -> {
                             transaction.setTrackingStatus(TrackingStatus.FAILED);
                             transactionService.saveTransaction(transaction);
-                            return new Response(TrackingStatus.FAILED);
+                            throw  new ServiceException("Unknown_Exception");
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
@@ -175,4 +176,6 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 //    private String generateID() {
 //        return UUID.randomUUID().toString();
 //    }
+
+
 }
