@@ -12,11 +12,6 @@ public abstract class AbstractService <E,  R extends JpaRepository<E , String>>{
     protected R repository;
 
 
-    public E insert(E e)  {
-
-        return repository.save(e);
-
-    }
 
 
 }

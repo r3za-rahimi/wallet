@@ -1,50 +1,44 @@
 package com.asan.wallet.controllers;
 
 import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
-import com.asan.wallet.models.WalletEntity;
-import com.asan.wallet.models.dto.Request;
-import com.asan.wallet.models.dto.Response;
-import com.asan.wallet.models.dto.WalletDto;
-import com.asan.wallet.services.FeignService;
+import com.asan.wallet.models.entity.WalletEntity;
+import com.asan.wallet.models.dto.*;
+import com.asan.wallet.models.requestrespons.*;
 import com.asan.wallet.services.WalletService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class WalletController extends AbstractController<WalletEntity, WalletDto, WalletService> {
 
-    @Autowired
-    FeignService authService;
 
-    @PostMapping
-    public void createWallet(@RequestBody WalletDto walletDto) throws ServiceException {
+    @PostMapping()
+    public ResponseEntity<String> createWallet(@RequestBody CreateWalletRequest wallet) throws ServiceException {
 
-        service.insert(converter.convertDto(walletDto));
-
+        WalletEntity walletEntity = service.createWallet(wallet);
+        return new ResponseEntity<>(walletEntity.getId(), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/balance")
-    public Response getBalance(@RequestBody Request request) throws ServiceException {
-
+    public BalanceResponse getBalance(@RequestBody BalanceRequest request) throws ServiceException {
         return service.getBalance(request);
     }
 
-        @PostMapping("/withdraw")
-        @ResponseStatus(HttpStatus.ACCEPTED)
-        public Response withdraw(@RequestBody Request request) throws ServiceException {
+    @PostMapping("/withdraw")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public WDResponse withdraw(@RequestBody WithdrawDepositRequest request) throws ServiceException {
 
+        return service.withdraw(request);
+    }
 
-           return service.withdraw(request);
-        }
+    @PostMapping("/deposit")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public WDResponse deposit(@RequestBody WithdrawDepositRequest request) throws ServiceException {
 
-        @PostMapping("/deposit")
-        @ResponseStatus(HttpStatus.ACCEPTED)
-        public Response deposit(@RequestBody Request request) throws ServiceException {
+        return service.deposit(request);
 
-            return service.deposit(request);
-
-        }
+    }
 
 
 }

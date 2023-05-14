@@ -11,6 +11,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,8 +34,11 @@ public class ControllersAspect {
 
     @Before("within(com.asan.wallet.controllers.AbstractController+ )")
     public void before() {
-
-        log.info("request coming from " + request.getServerName() + " AND iP is => " + request.getLocalAddr() + " AND CALL URL =>  " + request.getRequestURI());
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            HttpServletRequest request1 = ((ServletRequestAttributes) requestAttributes).getRequest();
+            log.info("request coming from " + request.getServerName() + " AND iP is => " + request.getLocalAddr() + " AND CALL URL =>  " + request.getRequestURI());
+        }
 
 
     }
@@ -51,10 +57,11 @@ public class ControllersAspect {
             value = joinPoint.proceed();
             if (value != null) {
                 logModel.setResponse(value);
-                return value;
             }
             logModelRepository.save(logModel);
             log.info("Success req " + objectMapper.writeValueAsString(logModel));
+
+
         } catch (Throwable e) {
 
 
@@ -64,7 +71,7 @@ public class ControllersAspect {
             writer.close();
             printWriter.close();
             logModel.setErrorTrace(writer.toString());
-           logModelRepository.save(logModel);
+            logModelRepository.save(logModel);
             log.error("Failure req " + objectMapper.writeValueAsString(logModel));
             throw e;
 

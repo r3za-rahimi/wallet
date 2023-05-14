@@ -1,6 +1,6 @@
 package com.asan.wallet.controllers;
 
-import com.asan.wallet.models.dto.converters.BaseConverter;
+import com.asan.wallet.converters.BaseConverter;
 import com.asan.wallet.services.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;

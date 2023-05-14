@@ -1,6 +1,6 @@
-package com.asan.wallet.models.dto.converters;
+package com.asan.wallet.converters;
 
-import com.asan.wallet.models.WalletEntity;
+import com.asan.wallet.models.entity.WalletEntity;
 import com.asan.wallet.models.dto.WalletDto;
 import org.mapstruct.Mapper;
 

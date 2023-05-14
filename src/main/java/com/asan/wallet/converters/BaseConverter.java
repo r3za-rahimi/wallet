@@ -1,4 +1,4 @@
-package com.asan.wallet.models.dto.converters;
+package com.asan.wallet.converters;
 
 import java.util.List;
 import java.util.stream.Collectors;

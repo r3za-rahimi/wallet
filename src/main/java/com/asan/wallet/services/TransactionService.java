@@ -1,7 +1,7 @@
 package com.asan.wallet.services;
 
-import com.asan.wallet.models.TransactionEntity;
-import com.asan.wallet.models.dto.Request;
+import com.asan.wallet.models.entity.TransactionEntity;
+import com.asan.wallet.models.requestrespons.TransactionRequest;
 import com.asan.wallet.repositories.TransactionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,7 +25,7 @@ public class TransactionService extends AbstractService<TransactionEntity, Trans
     }
 
 
-    public List<TransactionEntity> getTransactionsBetween(Request request) {
+    public List<TransactionEntity> getTransactionsBetween(TransactionRequest request) {
 
         return repository.findByWallet_IdAndDateBetween(request.getWalletId() , request.getMinimumDate() , request.getMaximumDate());
 

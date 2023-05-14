@@ -1,6 +1,6 @@
 package com.asan.wallet.repositories;
 
-import com.asan.wallet.models.TransactionEntity;
+import com.asan.wallet.models.entity.TransactionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;

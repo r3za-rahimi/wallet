@@ -1,4 +1,4 @@
-package com.asan.wallet.models;
+package com.asan.wallet.models.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

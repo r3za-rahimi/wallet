@@ -1,4 +1,4 @@
-package com.asan.wallet.models.dto;
+package com.asan.wallet.models.requestrespons;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,13 +11,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Request {
-
+public class BalanceRequest {
 
     private String walletId;
-    private String trackingId;
-    private Long amount;
-    private Date minimumDate;
-    private Date maximumDate;
 
 }

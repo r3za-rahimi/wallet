@@ -1,4 +1,4 @@
-package com.asan.wallet.models;
+package com.asan.wallet.models.entity;
 
 import com.asan.wallet.models.enums.DealType;
 import com.asan.wallet.models.enums.TrackingStatus;
@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.HashMap;
 
 @Entity
 @Getter
@@ -32,6 +31,7 @@ public class TransactionEntity extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
     private DealType dealType;
+
 
 
 
