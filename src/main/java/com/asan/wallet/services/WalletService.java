@@ -171,6 +171,25 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     }
 
 
+    @Transactional(rollbackFor = ServiceException.class)
+    public WDResponse walletToWallet(WalletRequest request , String token) throws ServiceException {
+
+      WalletEntity sourceWallet =   repository.findByUserName(getUserFromToken(token).getSub());
+      WalletEntity destinationWallet = repository.findByUserName(request.getUserName());
+
+      sourceWallet.setBalance(sourceWallet.getBalance() - request.getAmount());
+
+      destinationWallet.setBalance(destinationWallet.getBalance() + request.getAmount());
+
+
+      repository.save(sourceWallet);
+      repository.save(destinationWallet);
+
+      return WDResponse.builder().status(TrackingStatus.SUCCESS).build();
+
+    }
+
+
     public WalletEntity getWalletByName(String name) throws ServiceException {
 
         return repository.findByUserName(name);

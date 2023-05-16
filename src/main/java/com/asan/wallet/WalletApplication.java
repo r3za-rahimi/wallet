@@ -9,16 +9,22 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.annotation.KafkaListener;
 
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableFeignClients
+@EnableKafka
 public class WalletApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(WalletApplication.class, args);
     }
 
-
+//    @KafkaListener(topics = "create-user" ,autoStartup = "true" , groupId = "test" , containerFactory ="kafkaListenerContainerFactory" )
+//    public void listenGroupFoo(String message) {
+//        System.out.println("Received Message in group foo: " + message);
+//    }
 
 }
