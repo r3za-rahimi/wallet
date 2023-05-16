@@ -31,7 +31,7 @@ public class TransactionService extends AbstractService<TransactionEntity, Trans
     }
 
 
-    public List<TransactionEntity> getTransactionsBetween(TransactionRequest request , String token) throws ServiceException {
+    public List<TransactionEntity> getTransactionsBetween(TransactionRequest request, String token) throws ServiceException {
 
         return repository.findByWallet_UserNameAndDateBetween(jwtService.getAllClaimsFromToken(token).getSub(), request.getMinimumDate(), request.getMaximumDate());
 
@@ -39,8 +39,13 @@ public class TransactionService extends AbstractService<TransactionEntity, Trans
 
     public TrackingStatus getTransactionsStatus(String trackId) throws ServiceException {
 
-        return repository.findByTrackingId(trackId).getTrackingStatus();
+        TransactionEntity transaction = repository.findByTrackingId(trackId);
+        if (transaction == null) {
 
+            throw new ServiceException("Transaction_not_found");
+        } else {
+            return transaction.getTrackingStatus();
+        }
     }
 
 

@@ -8,7 +8,9 @@ import com.asan.wallet.models.enums.DealType;
 import com.asan.wallet.models.enums.TrackingStatus;
 import com.asan.wallet.models.requestrespons.*;
 import com.asan.wallet.repositories.WalletRepository;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,8 @@ import java.util.Random;
 @Service
 public class WalletService extends AbstractService<WalletEntity, WalletRepository> {
 
+    @Value("${app.test}")
+    private Boolean enableTest;
 
     @Autowired
     private TransactionService transactionService;
@@ -66,7 +70,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                 .build();
 
 
-        int num = getRandomNumber();
+        int num = enableTest ? 1 : getRandomNumber();
 
         switch (num) {
             case 1 -> {
@@ -102,10 +106,10 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-
             }
 
         }
+
 
         throw new ServiceException("Unknown_Exception");
 
@@ -113,7 +117,6 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     @Transactional(rollbackFor = ServiceException.class)
     public WDResponse withdraw(WithdrawDepositRequest request, String token) throws ServiceException {
-
 
         WalletEntity wallet = getWalletByName(getUserFromToken(token).getSub());
         wallet.setBalance(wallet.getBalance() - request.getAmount());
@@ -127,7 +130,8 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                 .build();
 
 
-        int num = getRandomNumber();
+        int num = enableTest ? 1 : getRandomNumber();
+
 
         switch (num) {
             case 1 -> {
@@ -163,7 +167,6 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-
             }
         }
 
@@ -172,20 +175,20 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
 
     @Transactional(rollbackFor = ServiceException.class)
-    public WDResponse walletToWallet(WalletRequest request , String token) throws ServiceException {
+    public WDResponse walletToWallet(WalletRequest request, String token) throws ServiceException {
 
-      WalletEntity sourceWallet =   repository.findByUserName(getUserFromToken(token).getSub());
-      WalletEntity destinationWallet = repository.findByUserName(request.getUserName());
+        WalletEntity sourceWallet = repository.findByUserName(getUserFromToken(token).getSub());
+        WalletEntity destinationWallet = repository.findByUserName(request.getUserName());
 
-      sourceWallet.setBalance(sourceWallet.getBalance() - request.getAmount());
+        sourceWallet.setBalance(sourceWallet.getBalance() - request.getAmount());
 
-      destinationWallet.setBalance(destinationWallet.getBalance() + request.getAmount());
+        destinationWallet.setBalance(destinationWallet.getBalance() + request.getAmount());
 
 
-      repository.save(sourceWallet);
-      repository.save(destinationWallet);
+        repository.save(sourceWallet);
+        repository.save(destinationWallet);
 
-      return WDResponse.builder().status(TrackingStatus.SUCCESS).build();
+        return WDResponse.builder().status(TrackingStatus.SUCCESS).build();
 
     }
 
