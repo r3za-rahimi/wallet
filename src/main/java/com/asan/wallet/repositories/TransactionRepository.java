@@ -1,6 +1,7 @@
 package com.asan.wallet.repositories;
 
 import com.asan.wallet.models.entity.TransactionEntity;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
@@ -15,4 +16,7 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity ,
 
 
     List<TransactionEntity> findByWallet_UserName(String name);
+
+
+    TransactionEntity findByTrackingId(String id);
 }

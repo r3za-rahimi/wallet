@@ -2,6 +2,7 @@ package com.asan.wallet.services;
 
 import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
 import com.asan.wallet.models.entity.TransactionEntity;
+import com.asan.wallet.models.enums.TrackingStatus;
 import com.asan.wallet.models.requestrespons.TransactionRequest;
 import com.asan.wallet.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,12 @@ public class TransactionService extends AbstractService<TransactionEntity, Trans
     public List<TransactionEntity> getTransactionsBetween(TransactionRequest request , String token) throws ServiceException {
 
         return repository.findByWallet_UserNameAndDateBetween(jwtService.getAllClaimsFromToken(token).getSub(), request.getMinimumDate(), request.getMaximumDate());
+
+    }
+
+    public TrackingStatus getTransactionsStatus(String trackId) throws ServiceException {
+
+        return repository.findByTrackingId(trackId).getTrackingStatus();
 
     }
 

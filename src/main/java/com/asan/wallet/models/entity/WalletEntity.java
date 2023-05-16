@@ -19,6 +19,7 @@ public class WalletEntity extends AbstractEntity {
     private Long balance;
 
 
+    @Column(unique = true)
     private String userName;
 
 

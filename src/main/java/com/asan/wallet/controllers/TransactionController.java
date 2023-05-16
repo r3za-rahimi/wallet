@@ -27,4 +27,11 @@ public class TransactionController extends AbstractController<TransactionEntity 
         return converter.convertEntity(service.getTransactionsBetween(request , token));
     }
 
+
+    @GetMapping("/transactions/{trackId}")
+    public void getTransactionStatus(@PathVariable("trackId") String trackId ) throws ServiceException {
+
+        service.getTransactionsStatus(trackId);
+    }
+
 }

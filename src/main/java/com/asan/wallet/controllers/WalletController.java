@@ -48,7 +48,7 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
 
     @PostMapping("/toWallet")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public WDResponse deposit(@RequestBody WalletRequest request , @RequestHeader("Authorization") String token) throws ServiceException {
+    public WDResponse toWallet(@RequestBody WalletRequest request , @RequestHeader("Authorization") String token) throws ServiceException {
 
         return service.walletToWallet(request ,token);
 

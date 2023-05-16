@@ -39,7 +39,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     public WalletEntity createWallet(String userName) throws ServiceException {
 
-        return repository.save(WalletEntity.builder().userName(userName).build());
+        return repository.save(WalletEntity.builder().userName(userName).balance(0L).build());
 
     }
 
