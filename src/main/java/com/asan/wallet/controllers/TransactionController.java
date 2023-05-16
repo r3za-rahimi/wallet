@@ -3,6 +3,7 @@ package com.asan.wallet.controllers;
 import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
 import com.asan.wallet.models.entity.TransactionEntity;
 import com.asan.wallet.models.dto.TransactionDto;
+import com.asan.wallet.models.enums.TrackingStatus;
 import com.asan.wallet.models.requestrespons.TransactionRequest;
 import com.asan.wallet.services.TransactionService;
 import org.springframework.http.HttpStatus;
@@ -29,9 +30,10 @@ public class TransactionController extends AbstractController<TransactionEntity 
 
 
     @GetMapping("/transactions/{trackId}")
-    public void getTransactionStatus(@PathVariable("trackId") String trackId ) throws ServiceException {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public TrackingStatus getTransactionStatus(@PathVariable("trackId") String trackId ) throws ServiceException {
 
-        service.getTransactionsStatus(trackId);
+        return service.getTransactionsStatus(trackId);
     }
 
 }
