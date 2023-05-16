@@ -11,5 +11,8 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity ,
 
     List<TransactionEntity> findByWallet_Id(String id);
 
-    List<TransactionEntity> findByWallet_IdAndDateBetween(String id , Date d1 , Date d2);
+    List<TransactionEntity> findByWallet_UserNameAndDateBetween(String name , Date d1 , Date d2);
+
+
+    List<TransactionEntity> findByWallet_UserName(String name);
 }

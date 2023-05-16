@@ -14,7 +14,6 @@ import java.util.Date;
 public class TransactionRequest {
 
 
-    private String walletId;
     private Date minimumDate;
     private Date maximumDate;
 

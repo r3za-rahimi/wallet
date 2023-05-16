@@ -13,20 +13,18 @@ import java.util.List;
 @RestController
 public class TransactionController extends AbstractController<TransactionEntity , TransactionDto , TransactionService> {
 
-
     @PostMapping("/transactions")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public List<TransactionDto> getTransaction(@RequestBody TransactionRequest request) throws ServiceException {
+    public List<TransactionDto> getTransaction( @RequestHeader("Authorization") String token) throws ServiceException {
 
-         return converter.convertEntity(service.getTransactions(request.getWalletId()));
+         return converter.convertEntity(service.getTransactions( token));
     }
 
     @PostMapping("/transactions/between")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public List<TransactionDto> getTransactionBetween(@RequestBody TransactionRequest request) throws ServiceException {
+    public List<TransactionDto> getTransactionBetween(@RequestBody TransactionRequest request ,  @RequestHeader("Authorization") String token) throws ServiceException {
 
         return converter.convertEntity(service.getTransactionsBetween(request));
     }
-
 
 }

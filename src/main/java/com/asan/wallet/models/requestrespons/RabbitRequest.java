@@ -14,6 +14,7 @@ public class RabbitRequest {
 
 
     private String walletId;
+    private String token;
     private Long amount;
     private DealType dealType;
 

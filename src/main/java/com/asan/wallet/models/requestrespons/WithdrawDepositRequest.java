@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Data
 @AllArgsConstructor
@@ -12,8 +15,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class WithdrawDepositRequest {
 
-    private String walletId;
+
     private String trackingId;
     private Long amount;
+
 
 }
