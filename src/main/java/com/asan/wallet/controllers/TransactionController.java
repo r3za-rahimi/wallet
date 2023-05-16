@@ -24,7 +24,7 @@ public class TransactionController extends AbstractController<TransactionEntity 
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<TransactionDto> getTransactionBetween(@RequestBody TransactionRequest request ,  @RequestHeader("Authorization") String token) throws ServiceException {
 
-        return converter.convertEntity(service.getTransactionsBetween(request));
+        return converter.convertEntity(service.getTransactionsBetween(request , token));
     }
 
 }
