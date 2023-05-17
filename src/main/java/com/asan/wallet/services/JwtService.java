@@ -20,18 +20,18 @@ import java.util.Base64;
 public class JwtService {
 
     @Autowired
-     private ObjectMapper objectMapper ;
+    private ObjectMapper objectMapper;
 
     @PostConstruct
-    public void init(){
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES , false);
+    public void init() {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     }
 
     public UserDetails getAllClaimsFromToken(String token) throws ServiceException {
-       if (token.startsWith("Bearer")){
-           token = token.substring(8);
-       }
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(8);
+        }
         Base64.Decoder decoder = Base64.getUrlDecoder();
 
         String[] chunks = token.split("\\.");
@@ -40,7 +40,10 @@ public class JwtService {
         String payload = new String(decoder.decode(chunks[1]));
 
         try {
-            return objectMapper.readValue(payload , UserDetails.class);
+            UserDetails userDetails = objectMapper.readValue(payload, UserDetails.class);
+            token = "Bearer " + token;
+            userDetails.setToken(token);
+            return userDetails;
         } catch (JsonProcessingException e) {
             throw new ServiceException("TOKEN_EXCEPTION");
         }

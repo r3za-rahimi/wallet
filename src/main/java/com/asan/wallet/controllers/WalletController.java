@@ -15,42 +15,40 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class WalletController extends AbstractController<WalletEntity, WalletDto, WalletService> {
 
-
     @Autowired
     JwtService jwtService;
+
     @PostMapping()
     public ResponseEntity<String> createWallet(@RequestHeader("Authorization") String token ) throws ServiceException {
 
-        WalletEntity walletEntity = service.createWalletFromApi(token);
+        WalletEntity walletEntity = service.createWalletFromApi(jwtService.getAllClaimsFromToken(token));
         return new ResponseEntity<>(walletEntity.getId(), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/balance")
     public BalanceResponse getBalance(@RequestHeader("Authorization") String token) throws ServiceException {
-        return service.getBalance(token);
+        return service.getBalance(jwtService.getAllClaimsFromToken(token));
     }
 
     @PostMapping("/withdraw")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public WDResponse withdraw(@RequestBody WithdrawDepositRequest request , @RequestHeader("Authorization") String token) throws ServiceException {
 
-        return service.withdraw(request ,token);
+        return service.withdraw(request ,jwtService.getAllClaimsFromToken(token));
     }
 
     @PostMapping("/deposit")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public WDResponse deposit(@RequestBody WithdrawDepositRequest request , @RequestHeader("Authorization") String token) throws ServiceException {
 
-        return service.deposit(request ,token);
-
+        return service.deposit(request ,jwtService.getAllClaimsFromToken(token));
     }
-
 
     @PostMapping("/toWallet")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public WDResponse toWallet(@RequestBody WalletRequest request , @RequestHeader("Authorization") String token) throws ServiceException {
 
-        return service.walletToWallet(request ,token);
+        return service.walletToWallet(request ,jwtService.getAllClaimsFromToken(token));
 
     }
 

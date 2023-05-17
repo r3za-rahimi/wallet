@@ -33,10 +33,10 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     private Random random = new Random();
 
-    public WalletEntity createWalletFromApi(String token) throws ServiceException {
+    public WalletEntity createWalletFromApi(UserDetails user) throws ServiceException {
 
-        UserDetails userDetails = jwtService.getAllClaimsFromToken(token);
-        return repository.save(WalletEntity.builder().userName(userDetails.getSub()).build());
+
+        return repository.save(WalletEntity.builder().userName(user.getSub()).balance(0L).build());
 
 
     }
@@ -47,18 +47,18 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
     }
 
-    public BalanceResponse getBalance(String token) throws ServiceException {
+    public BalanceResponse getBalance(UserDetails user) throws ServiceException {
 
-        WalletEntity wallet = getWalletByName(getUserFromToken(token).getSub());
+        WalletEntity wallet = getWalletByName(user.getSub());
         return new BalanceResponse(wallet.getBalance());
 
     }
 
     @Transactional(rollbackFor = ServiceException.class)
-    public WDResponse deposit(WithdrawDepositRequest request, String token) throws ServiceException {
+    public WDResponse deposit(WithdrawDepositRequest request, UserDetails user) throws ServiceException {
 
 
-        WalletEntity wallet = getWalletByName(getUserFromToken(token).getSub());
+        WalletEntity wallet = getWalletByName(user.getSub());
         wallet.setBalance(wallet.getBalance() + request.getAmount());
 
         TransactionEntity transaction = TransactionEntity.builder()
@@ -76,15 +76,14 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             case 1 -> {
                 transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                 transactionService.saveTransaction(transaction);
-                rabbitService.sendToRabbit(new RabbitRequest(wallet.getId(), token, request.getAmount(), DealType.DEPOSIT));
+
+                rabbitService.sendToRabbit(new RabbitRequest(wallet.getId(), user.getToken(), request.getAmount(), DealType.DEPOSIT));
                 return new WDResponse(TrackingStatus.SUCCESS);
             }
             case 2 -> {
-
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
                 transactionService.saveTransaction(transaction);
                 throw new ServiceException("Unknown_Exception");
-
             }
             case 3 -> {
                 try {
@@ -99,7 +98,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                             transactionService.saveTransaction(transaction);
-                            rabbitService.sendToRabbit(new RabbitRequest(wallet.getId(), token, request.getAmount(), DealType.DEPOSIT));
+                            rabbitService.sendToRabbit(new RabbitRequest(wallet.getId(), user.getToken(), request.getAmount(), DealType.DEPOSIT));
                             return new WDResponse(TrackingStatus.SUCCESS);
                         }
                     }
@@ -110,15 +109,14 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
         }
 
-
         throw new ServiceException("Unknown_Exception");
 
     }
 
     @Transactional(rollbackFor = ServiceException.class)
-    public WDResponse withdraw(WithdrawDepositRequest request, String token) throws ServiceException {
+    public WDResponse withdraw(WithdrawDepositRequest request,UserDetails user) throws ServiceException {
 
-        WalletEntity wallet = getWalletByName(getUserFromToken(token).getSub());
+        WalletEntity wallet = getWalletByName(user.getSub());
         wallet.setBalance(wallet.getBalance() - request.getAmount());
 
         TransactionEntity transaction = TransactionEntity.builder()
@@ -137,9 +135,8 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             case 1 -> {
                 transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                 transactionService.saveTransaction(transaction);
-                rabbitService.sendToRabbit(new RabbitRequest(wallet.getId(), token, request.getAmount(), DealType.WITHDRAW));
+                rabbitService.sendToRabbit(new RabbitRequest(wallet.getId(), user.getToken(), request.getAmount(), DealType.WITHDRAW));
                 return new WDResponse(TrackingStatus.SUCCESS);
-
             }
             case 2 -> {
                 transaction.setTrackingStatus(TrackingStatus.FAILED);
@@ -160,7 +157,8 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
                             transactionService.saveTransaction(transaction);
-                            rabbitService.sendToRabbit(new RabbitRequest(wallet.getId(), token, request.getAmount(), DealType.WITHDRAW));
+
+                            rabbitService.sendToRabbit(new RabbitRequest(wallet.getId(), user.getToken(), request.getAmount(), DealType.WITHDRAW));
                             return new WDResponse(TrackingStatus.SUCCESS);
                         }
                     }
@@ -175,9 +173,9 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
 
 
     @Transactional(rollbackFor = ServiceException.class)
-    public WDResponse walletToWallet(WalletRequest request, String token) throws ServiceException {
+    public WDResponse walletToWallet(WalletRequest request, UserDetails user) throws ServiceException {
 
-        WalletEntity sourceWallet = repository.findByUserName(getUserFromToken(token).getSub());
+        WalletEntity sourceWallet = repository.findByUserName(getUserFromToken(user.getToken()).getSub());
         WalletEntity destinationWallet = repository.findByUserName(request.getUserName());
 
         sourceWallet.setBalance(sourceWallet.getBalance() - request.getAmount());
