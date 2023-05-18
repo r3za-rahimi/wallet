@@ -22,10 +22,8 @@ public class AbstractEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-
     @Version
     private Long version;
-
 
     @CreatedDate
     private Date insertTimeStamp;
@@ -33,8 +31,4 @@ public class AbstractEntity {
     @LastModifiedDate
     private Date lastUpdateTimeStamp;
 
-    @CreatedBy
-    private  String createUser;
-    @LastModifiedBy
-    private String updateUser;
 }

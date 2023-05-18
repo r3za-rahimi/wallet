@@ -3,14 +3,12 @@ package com.asan.wallet;
 import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
 import com.asan.wallet.models.entity.WalletEntity;
 import com.asan.wallet.models.enums.TrackingStatus;
-import com.asan.wallet.models.requestrespons.CreateWalletRequest;
 import com.asan.wallet.models.requestrespons.WDResponse;
 import com.asan.wallet.models.requestrespons.WithdrawDepositRequest;
-import com.asan.wallet.repositories.TransactionRepository;
+import com.asan.wallet.services.JwtService;
 import com.asan.wallet.services.TransactionService;
 import com.asan.wallet.services.WalletService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.AbstractThrowableAssert;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,10 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 import java.util.UUID;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,7 +41,7 @@ class WalletApplicationTests {
     private WalletService walletService;
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    JwtService jwtService;
 
     @Autowired
     private TransactionService transactionService;
@@ -66,12 +68,11 @@ class WalletApplicationTests {
         Assertions.assertThat(wallet.getUserName()).isEqualTo("Asanpardakht");
 
     }
-
     @Test
     public void depositCallFromWalletService() throws ServiceException {
 
         WalletEntity baseWallet = walletService.getWalletByName("Asanpardakht");
-        walletService.deposit(new WithdrawDepositRequest("trackId", 525L), token);
+        walletService.deposit(new WithdrawDepositRequest("trackId", 525L), jwtService.getAllClaimsFromToken(token));
         WalletEntity walletAfterDeposit = walletService.getWalletByName("Asanpardakht");
         Assertions.assertThat(walletAfterDeposit.getBalance()).isEqualTo(baseWallet.getBalance() + 525L);
     }
@@ -79,7 +80,7 @@ class WalletApplicationTests {
     @Test
     public void walletDeposit() throws ServiceException {
 
-        WDResponse wdResponse = walletService.deposit(new WithdrawDepositRequest( generateID(), 500L),token);
+        WDResponse wdResponse = walletService.deposit(new WithdrawDepositRequest( generateID(), 500L),jwtService.getAllClaimsFromToken(token));
         Assertions.assertThat(wdResponse).isNotNull();
         Assertions.assertThat(wdResponse.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
 
@@ -87,7 +88,7 @@ class WalletApplicationTests {
 
     @Test
     public void walletWithdraw() throws ServiceException {
-        WDResponse wdResponse = walletService.withdraw(new WithdrawDepositRequest( generateID(), 500L),token);
+        WDResponse wdResponse = walletService.withdraw(new WithdrawDepositRequest( generateID(), 500L),jwtService.getAllClaimsFromToken(token));
         Assertions.assertThat(wdResponse).isNotNull();
         Assertions.assertThat(wdResponse.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
 
@@ -96,7 +97,7 @@ class WalletApplicationTests {
     @Test
     public void walletAfterWithdraw() throws ServiceException {
         WalletEntity baseWallet = walletService.getWalletByName("Asanpardakht");
-        walletService.withdraw(new WithdrawDepositRequest(generateID(), 525L), token);
+        walletService.withdraw(new WithdrawDepositRequest(generateID(), 525L), jwtService.getAllClaimsFromToken(token));
         WalletEntity walletAfterDeposit = walletService.getWalletByName("Asanpardakht");
         Assertions.assertThat(walletAfterDeposit.getBalance()).isEqualTo(baseWallet.getBalance() - 525L);
     }
@@ -108,15 +109,50 @@ class WalletApplicationTests {
         Assertions.assertThat(status).isEqualTo(TrackingStatus.SUCCESS);
     }
 
-//    @Test
-//    public void getExceptionTransaction() throws ServiceException {
-//
-//
-//           Assertions.assertThatThrownBy(() -> transactionService.getTransactionsStatus("trk"));
-//
-//         Assertions.assertThat().isEqualTo("Transaction_not_found");
-//
-//    }
+    @Test
+    public void getExceptionTransaction()  {
+
+        Assertions.assertThatExceptionOfType(ServiceException.class).isThrownBy(() -> {
+            transactionService.getTransactionsStatus("trk");
+        });
+
+    }
+
+    @Test
+    public void testHappyDeposit() throws Exception {
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/wallet/deposit").header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(WithdrawDepositRequest.builder()
+                                .amount(500L)
+                                .trackingId(generateID())
+                                .build())))
+                .andExpect(status().isAccepted());
+    }
+
+
+    @Test
+    public void testHappyWithdraw() throws Exception {
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/wallet/withdraw").header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(WithdrawDepositRequest.builder()
+                                .amount(500L)
+                                .trackingId(generateID())
+                                .build())))
+                .andExpect(status().isAccepted());
+
+    }
+
+    @Test
+    public void testHappyBalance() throws Exception {
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/wallet/balance").header("Authorization", token))
+                .andExpect(status().isOk());
+
+    }
+
 
 
     private String generateID() {

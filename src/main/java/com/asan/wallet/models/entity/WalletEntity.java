@@ -14,15 +14,10 @@ import java.util.List;
 @Builder
 public class WalletEntity extends AbstractEntity {
 
-
-
     private Long balance;
 
-
-    @Column(unique = true)
     private String userName;
 
-
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<TransactionEntity> transactionEntities;
+    private List<WalletTransaction> transactionEntities;
 }

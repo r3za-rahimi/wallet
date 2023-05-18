@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class WalletRequest {
 
-    private String userName;
+    private String sourceWalletId;
+    private String destinationWalletId;
     private Long amount;
 
 }

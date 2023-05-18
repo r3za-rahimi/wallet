@@ -5,20 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WithdrawDepositRequest {
+public class TrackingRequest {
 
-
-    private String walletId;
-    private String trackingId;
-    private Long amount;
+    private String trackId;
 
 
 }

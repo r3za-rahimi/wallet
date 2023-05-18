@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Base64;
 
-@Service
+//@Service
 @Component
 @Slf4j
 public class JwtService {
@@ -38,7 +38,6 @@ public class JwtService {
 
         String header = new String(decoder.decode(chunks[0]));
         String payload = new String(decoder.decode(chunks[1]));
-
         try {
             UserDetails userDetails = objectMapper.readValue(payload, UserDetails.class);
             token = "Bearer " + token;

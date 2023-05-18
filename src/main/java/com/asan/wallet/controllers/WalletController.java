@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class WalletController extends AbstractController<WalletEntity, WalletDto, WalletService> {
 
@@ -21,13 +23,13 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
     @PostMapping()
     public ResponseEntity<String> createWallet(@RequestHeader("Authorization") String token ) throws ServiceException {
 
-        WalletEntity walletEntity = service.createWalletFromApi(jwtService.getAllClaimsFromToken(token));
+        WalletEntity walletEntity = service.createWallet(jwtService.getAllClaimsFromToken(token));
         return new ResponseEntity<>(walletEntity.getId(), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/balance")
-    public BalanceResponse getBalance(@RequestHeader("Authorization") String token) throws ServiceException {
-        return service.getBalance(jwtService.getAllClaimsFromToken(token));
+    public BalanceResponse getBalance(@RequestBody BalanceRequest request , @RequestHeader("Authorization") String token) throws ServiceException {
+        return service.getBalance(request , jwtService.getAllClaimsFromToken(token));
     }
 
     @PostMapping("/withdraw")
@@ -49,6 +51,15 @@ public class WalletController extends AbstractController<WalletEntity, WalletDto
     public WDResponse toWallet(@RequestBody WalletRequest request , @RequestHeader("Authorization") String token) throws ServiceException {
 
         return service.walletToWallet(request ,jwtService.getAllClaimsFromToken(token));
+
+    }
+
+
+    @GetMapping()
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public List<WalletDto> walletList( @RequestHeader("Authorization") String token) throws ServiceException {
+
+        return converter.convertEntity(service.getWalletsByUsername(jwtService.getAllClaimsFromToken(token).getSub()));
 
     }
 
