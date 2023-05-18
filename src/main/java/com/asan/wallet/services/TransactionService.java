@@ -43,7 +43,7 @@ public class TransactionService extends AbstractService<WalletTransaction, Trans
 
         if (transaction == null) {
 
-            throw new ServiceException("Transaction_not_found");
+           return TrackingStatus.FAILED;
         } else {
             return transaction.getTrackingStatus();
         }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TrackingRequest {
 
-    private String trackId;
+    private String trackingId;
 
 
 }

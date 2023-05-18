@@ -55,13 +55,20 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
         wallet.setBalance(wallet.getBalance() + request.getAmount());
 
 
-        WalletTransaction transaction = WalletTransaction.builder()
-                .amount(request.getAmount())
-                .date(new Date())
-                .trackingId(request.getTrackingId())
-                .dealType(DealType.DEPOSIT)
-                .wallet(wallet)
-                .build();
+        WalletTransaction transaction;
+
+        if (transactionService.getTransactionByTrk(request.getTrackingId()) == null){
+            transaction = WalletTransaction.builder()
+                    .amount(request.getAmount())
+                    .date(new Date())
+                    .trackingId(request.getTrackingId())
+                    .dealType(DealType.WITHDRAW)
+                    .wallet(wallet)
+                    .build();
+        }else {
+
+            throw new ServiceException("TRACK_ID_EXCEPTION");
+        }
 
         int num = enableTest ? 1 : getRandomNumber();
 
@@ -73,9 +80,8 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                 return new WDResponse(TrackingStatus.SUCCESS);
             }
             case 2 -> {
-                transaction.setTrackingStatus(TrackingStatus.FAILED);
-                transactionService.saveTransaction(transaction);
-                throw new ServiceException("Unknown_Exception");
+
+                return new WDResponse(TrackingStatus.FAILED);
             }
             case 3 -> {
                 try {
@@ -83,9 +89,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                     int num2 = getRandomNumber();
                     switch (num2) {
                         case 1 -> {
-                            transaction.setTrackingStatus(TrackingStatus.FAILED);
-                            transactionService.saveTransaction(transaction);
-                            throw new ServiceException("Unknown_Exception");
+                            return new WDResponse(TrackingStatus.FAILED);
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);
@@ -115,13 +119,20 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
         WalletEntity wallet = repository.findById(request.getWalletId()).orElseThrow(() -> new ServiceException("Wallet_NOT_FOUND"));
         wallet.setBalance(wallet.getBalance() - request.getAmount());
 
-        WalletTransaction transaction = WalletTransaction.builder()
-                .amount(request.getAmount())
-                .date(new Date())
-                .trackingId(request.getTrackingId())
-                .dealType(DealType.WITHDRAW)
-                .wallet(wallet)
-                .build();
+        WalletTransaction transaction;
+
+        if (transactionService.getTransactionByTrk(request.getTrackingId()) == null){
+            transaction = WalletTransaction.builder()
+                    .amount(request.getAmount())
+                    .date(new Date())
+                    .trackingId(request.getTrackingId())
+                    .dealType(DealType.WITHDRAW)
+                    .wallet(wallet)
+                    .build();
+        }else {
+
+            throw new ServiceException("TRACK_ID_EXCEPTION");
+        }
 
 
         int num = enableTest ? 1 : getRandomNumber();
@@ -135,9 +146,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                 return new WDResponse(TrackingStatus.SUCCESS);
             }
             case 2 -> {
-                transaction.setTrackingStatus(TrackingStatus.FAILED);
-                transactionService.saveTransaction(transaction);
-                throw new ServiceException("Unknown_Exception");
+                return new WDResponse(TrackingStatus.FAILED);
 
             }
             case 3 -> {
@@ -146,9 +155,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                     int num2 = getRandomNumber();
                     switch (num2) {
                         case 1 -> {
-                            transaction.setTrackingStatus(TrackingStatus.FAILED);
-                            transactionService.saveTransaction(transaction);
-                            throw new ServiceException("Unknown_Exception");
+                            return new WDResponse(TrackingStatus.FAILED);
                         }
                         case 2, 3 -> {
                             transaction.setTrackingStatus(TrackingStatus.SUCCESS);

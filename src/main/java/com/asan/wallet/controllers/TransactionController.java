@@ -34,7 +34,7 @@ public class TransactionController extends AbstractController<WalletTransaction,
     @ResponseStatus(HttpStatus.ACCEPTED)
     public TrackingStatus getTransactionStatus(@RequestBody TrackingRequest request ) throws ServiceException {
 
-        return service.getTransactionsStatus(request.getTrackId());
+        return service.getTransactionsStatus(request.getTrackingId());
     }
 
 }
