@@ -14,6 +14,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -39,28 +40,27 @@ public class MockServiceTest {
     public MockServiceTest() throws ServiceException {
     }
 
-//    @BeforeAll
-//    public void setup() throws Exception {
-//
-//        WalletEntity wallet = new WalletEntity(500L , "AsanPardakht" , new ArrayList<>());
-//
-//        when(walletService.createWallet("AsanPardakht")).thenReturn(wallet);
+    @BeforeAll
+    public void setup() throws Exception {
+
+        WalletEntity wallet = WalletEntity.builder().userName("AsanPardakht").build();
+
+        Mockito.when(walletService.createWallet(Mockito.any())).thenReturn(wallet);
 //        when(walletService.createWallet("MAr")).thenReturn(new WalletEntity(500L , "MAr" , new ArrayList<>()));
 //        when(walletService.deposit(new WithdrawDepositRequest("trk" , 10L) ,new UserDetails())).thenReturn(new WDResponse(TrackingStatus.SUCCESS));
 //        when(walletService.withdraw(new WithdrawDepositRequest("trk" , 10L) ,new UserDetails())).thenReturn(new WDResponse(TrackingStatus.SUCCESS));
-//    }
+    }
 
-//    @Test
-//    public void insertWallet() throws Exception {
-//
-//        WalletEntity walletIns = walletService.createWallet("AsanPardakht");
-//        Assertions.assertThat(walletIns.getUserName()).isEqualTo("AsanPardakht");
-//
-//        WalletEntity walletSec = walletService.createWallet("MAr");
-//        Assertions.assertThat(walletSec.getUserName()).isEqualTo("MAr");
-//
-//
-//    }
+    @Test
+    public void insertWallet() throws Exception {
+
+        WalletEntity walletIns = walletService.createWallet(UserDetails.builder().sub("AsanPardakht").build());
+        Assertions.assertThat(walletIns.getUserName()).isEqualTo("AsanPardakht");
+
+
+
+
+    }
 //
 //    @Test
 //    public void walletDeposit() throws Exception {

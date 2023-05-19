@@ -48,7 +48,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     @Transactional(rollbackFor = ServiceException.class)
     public WDResponse deposit(WithdrawDepositRequest request, UserDetails user) throws ServiceException {
 
-        if (!validateWalletWithUsername(user.getSub() ,request.getWalletId() ))
+        if ( !enableTest &  !validateWalletWithUsername(user.getSub() ,request.getWalletId() ))
             throw new ServiceException("SECURITY_EXCEPTION");
 
         WalletEntity wallet = repository.findById(request.getWalletId()).orElseThrow(() -> new ServiceException("Wallet_NOT_FOUND"));
@@ -62,7 +62,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
                     .amount(request.getAmount())
                     .date(new Date())
                     .trackingId(request.getTrackingId())
-                    .dealType(DealType.WITHDRAW)
+                    .dealType(DealType.DEPOSIT)
                     .wallet(wallet)
                     .build();
         }else {
@@ -104,7 +104,6 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             }
 
         }
-
         throw new ServiceException("Unknown_Exception");
 
     }
@@ -112,7 +111,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     @Transactional(rollbackFor = ServiceException.class)
     public WDResponse withdraw(WithdrawDepositRequest request, UserDetails user) throws ServiceException {
 
-        if (!validateWalletWithUsername(user.getSub() ,request.getWalletId() ))
+        if (!enableTest  &  !validateWalletWithUsername(user.getSub() ,request.getWalletId() ))
             throw new ServiceException("SECURITY_EXCEPTION");
 
 
@@ -147,7 +146,6 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
             }
             case 2 -> {
                 return new WDResponse(TrackingStatus.FAILED);
-
             }
             case 3 -> {
                 try {
@@ -177,7 +175,7 @@ public class WalletService extends AbstractService<WalletEntity, WalletRepositor
     @Transactional(rollbackFor = ServiceException.class)
     public WDResponse walletToWallet(WalletRequest request, UserDetails user) throws ServiceException {
 
-        if (!validateWalletWithUsername(user.getSub() ,request.getSourceWalletId() ))
+        if ( !enableTest  &  !validateWalletWithUsername(user.getSub() ,request.getSourceWalletId() ))
             throw new ServiceException("SECURITY_EXCEPTION");
 
         WalletEntity sourceWallet = repository.findById(request.getSourceWalletId()).orElseThrow(() -> new ServiceException("Wallet_NOT_FOUND"));

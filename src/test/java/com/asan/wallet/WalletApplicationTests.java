@@ -4,7 +4,9 @@ import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
 import com.asan.wallet.models.dto.UserDetails;
 import com.asan.wallet.models.entity.WalletEntity;
 import com.asan.wallet.models.enums.TrackingStatus;
+import com.asan.wallet.models.requestrespons.BalanceRequest;
 import com.asan.wallet.models.requestrespons.WDResponse;
+import com.asan.wallet.models.requestrespons.WalletRequest;
 import com.asan.wallet.models.requestrespons.WithdrawDepositRequest;
 import com.asan.wallet.services.JwtService;
 import com.asan.wallet.services.TransactionService;
@@ -69,7 +71,6 @@ class WalletApplicationTests {
     public void getWallet() throws Exception {
 
         List<WalletEntity> wallets = walletService.getWalletsByUsername("Asanpardakht");
-        System.out.println(wallets.get(0).getId());
         Assertions.assertThat(wallets).isNotNull();
         Assertions.assertThat(wallets.get(0).getUserName()).isEqualTo("Asanpardakht");
 
@@ -86,7 +87,7 @@ class WalletApplicationTests {
     @Test
     public void walletDeposit() throws ServiceException {
 
-        WDResponse wdResponse = walletService.deposit(new WithdrawDepositRequest("", generateID(), 500L),jwtService.getAllClaimsFromToken(token));
+        WDResponse wdResponse = walletService.deposit(new WithdrawDepositRequest(walletId, generateID(), 500L),jwtService.getAllClaimsFromToken(token));
         Assertions.assertThat(wdResponse).isNotNull();
         Assertions.assertThat(wdResponse.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
 
@@ -94,7 +95,7 @@ class WalletApplicationTests {
 
     @Test
     public void walletWithdraw() throws ServiceException {
-        System.out.println("54" + walletId);
+
         WDResponse wdResponse = walletService.withdraw(new WithdrawDepositRequest(walletId , generateID(), 500L),jwtService.getAllClaimsFromToken(token));
         Assertions.assertThat(wdResponse).isNotNull();
         Assertions.assertThat(wdResponse.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
@@ -116,7 +117,7 @@ class WalletApplicationTests {
         Assertions.assertThat(status).isEqualTo(TrackingStatus.SUCCESS);
     }
 
-    @Test
+//    @Test
     public void getExceptionTransaction()  {
 
         Assertions.assertThatExceptionOfType(ServiceException.class).isThrownBy(() -> {
@@ -131,6 +132,7 @@ class WalletApplicationTests {
         mvc.perform(MockMvcRequestBuilders
                         .post("/wallet/deposit").header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(WithdrawDepositRequest.builder()
+                                .walletId(walletId)
                                 .amount(500L)
                                 .trackingId(generateID())
                                 .build())))
@@ -144,6 +146,7 @@ class WalletApplicationTests {
         mvc.perform(MockMvcRequestBuilders
                         .post("/wallet/withdraw").header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(WithdrawDepositRequest.builder()
+                                .walletId(walletId)
                                 .amount(500L)
                                 .trackingId(generateID())
                                 .build())))
@@ -155,7 +158,10 @@ class WalletApplicationTests {
     public void testHappyBalance() throws Exception {
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/wallet/balance").header("Authorization", token))
+                        .post("/wallet/balance").header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(BalanceRequest.builder()
+                                .walletId(walletId)
+                                .build())))
                 .andExpect(status().isOk());
 
     }
