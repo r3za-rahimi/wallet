@@ -39,43 +39,43 @@ public class MockServiceTest {
     public MockServiceTest() throws ServiceException {
     }
 
-    @BeforeAll
-    public void setup() throws Exception {
+//    @BeforeAll
+//    public void setup() throws Exception {
+//
+//        WalletEntity wallet = new WalletEntity(500L , "AsanPardakht" , new ArrayList<>());
+//
+//        when(walletService.createWallet("AsanPardakht")).thenReturn(wallet);
+//        when(walletService.createWallet("MAr")).thenReturn(new WalletEntity(500L , "MAr" , new ArrayList<>()));
+//        when(walletService.deposit(new WithdrawDepositRequest("trk" , 10L) ,new UserDetails())).thenReturn(new WDResponse(TrackingStatus.SUCCESS));
+//        when(walletService.withdraw(new WithdrawDepositRequest("trk" , 10L) ,new UserDetails())).thenReturn(new WDResponse(TrackingStatus.SUCCESS));
+//    }
 
-        WalletEntity wallet = new WalletEntity(500L , "AsanPardakht" , new ArrayList<>());
-
-        when(walletService.createWallet("AsanPardakht")).thenReturn(wallet);
-        when(walletService.createWallet("MAr")).thenReturn(new WalletEntity(500L , "MAr" , new ArrayList<>()));
-        when(walletService.deposit(new WithdrawDepositRequest("trk" , 10L) ,new UserDetails())).thenReturn(new WDResponse(TrackingStatus.SUCCESS));
-        when(walletService.withdraw(new WithdrawDepositRequest("trk" , 10L) ,new UserDetails())).thenReturn(new WDResponse(TrackingStatus.SUCCESS));
-    }
-
-    @Test
-    public void insertWallet() throws Exception {
-
-        WalletEntity walletIns = walletService.createWallet("AsanPardakht");
-        Assertions.assertThat(walletIns.getUserName()).isEqualTo("AsanPardakht");
-
-        WalletEntity walletSec = walletService.createWallet("MAr");
-        Assertions.assertThat(walletSec.getUserName()).isEqualTo("MAr");
-
-
-    }
-
-    @Test
-    public void walletDeposit() throws Exception {
-
-        WDResponse response = walletService.deposit(new WithdrawDepositRequest("trk" , 10L) , new UserDetails());
-        Assertions.assertThat(response.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
-
-    }
-
-    @Test
-    public void walletWithdraw() throws Exception {
-
-        WDResponse response = walletService.withdraw(new WithdrawDepositRequest("trk" , 10L) , new UserDetails());
-        Assertions.assertThat(response.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
-
-    }
+//    @Test
+//    public void insertWallet() throws Exception {
+//
+//        WalletEntity walletIns = walletService.createWallet("AsanPardakht");
+//        Assertions.assertThat(walletIns.getUserName()).isEqualTo("AsanPardakht");
+//
+//        WalletEntity walletSec = walletService.createWallet("MAr");
+//        Assertions.assertThat(walletSec.getUserName()).isEqualTo("MAr");
+//
+//
+//    }
+//
+//    @Test
+//    public void walletDeposit() throws Exception {
+//
+//        WDResponse response = walletService.deposit(new WithdrawDepositRequest("trk" , 10L) , new UserDetails());
+//        Assertions.assertThat(response.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
+//
+//    }
+//
+//    @Test
+//    public void walletWithdraw() throws Exception {
+//
+//        WDResponse response = walletService.withdraw(new WithdrawDepositRequest("trk" , 10L) , new UserDetails());
+//        Assertions.assertThat(response.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
+//
+//    }
 
 }

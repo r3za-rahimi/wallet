@@ -1,6 +1,7 @@
 package com.asan.wallet;
 
 import com.asan.wallet.exceptionhandler.exceptions.ServiceException;
+import com.asan.wallet.models.dto.UserDetails;
 import com.asan.wallet.models.entity.WalletEntity;
 import com.asan.wallet.models.enums.TrackingStatus;
 import com.asan.wallet.models.requestrespons.WDResponse;
@@ -49,6 +50,9 @@ class WalletApplicationTests {
     @Value("${token.test}")
     private String token;
 
+
+    String walletId;
+
     @Test
     void contextLoads() {
     }
@@ -56,31 +60,33 @@ class WalletApplicationTests {
     @BeforeAll
     public void createWallet() throws Exception {
 
-        WalletEntity wallet = walletService.createWallet("Asanpardakht");
+        WalletEntity wallet = walletService.createWallet(UserDetails.builder().sub("Asanpardakht").build());
+        walletId =wallet.getId();
 
     }
 
     @Test
     public void getWallet() throws Exception {
 
-        WalletEntity wallet = walletService.getWalletByName("Asanpardakht");
-        Assertions.assertThat(wallet).isNotNull();
-        Assertions.assertThat(wallet.getUserName()).isEqualTo("Asanpardakht");
+        List<WalletEntity> wallets = walletService.getWalletsByUsername("Asanpardakht");
+        System.out.println(wallets.get(0).getId());
+        Assertions.assertThat(wallets).isNotNull();
+        Assertions.assertThat(wallets.get(0).getUserName()).isEqualTo("Asanpardakht");
 
     }
     @Test
     public void depositCallFromWalletService() throws ServiceException {
 
-        WalletEntity baseWallet = walletService.getWalletByName("Asanpardakht");
-        walletService.deposit(new WithdrawDepositRequest("trackId", 525L), jwtService.getAllClaimsFromToken(token));
-        WalletEntity walletAfterDeposit = walletService.getWalletByName("Asanpardakht");
-        Assertions.assertThat(walletAfterDeposit.getBalance()).isEqualTo(baseWallet.getBalance() + 525L);
+        List<WalletEntity> wallets = walletService.getWalletsByUsername("Asanpardakht");
+        walletService.deposit(new WithdrawDepositRequest(walletId ,"trackId", 525L), jwtService.getAllClaimsFromToken(token));
+        WalletEntity walletAfterDeposit = walletService.getWalletsByUsername("Asanpardakht").get(0);
+        Assertions.assertThat(walletAfterDeposit.getBalance()).isEqualTo(wallets.get(0).getBalance() + 525L);
     }
 
     @Test
     public void walletDeposit() throws ServiceException {
 
-        WDResponse wdResponse = walletService.deposit(new WithdrawDepositRequest( generateID(), 500L),jwtService.getAllClaimsFromToken(token));
+        WDResponse wdResponse = walletService.deposit(new WithdrawDepositRequest("", generateID(), 500L),jwtService.getAllClaimsFromToken(token));
         Assertions.assertThat(wdResponse).isNotNull();
         Assertions.assertThat(wdResponse.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
 
@@ -88,7 +94,8 @@ class WalletApplicationTests {
 
     @Test
     public void walletWithdraw() throws ServiceException {
-        WDResponse wdResponse = walletService.withdraw(new WithdrawDepositRequest( generateID(), 500L),jwtService.getAllClaimsFromToken(token));
+        System.out.println("54" + walletId);
+        WDResponse wdResponse = walletService.withdraw(new WithdrawDepositRequest(walletId , generateID(), 500L),jwtService.getAllClaimsFromToken(token));
         Assertions.assertThat(wdResponse).isNotNull();
         Assertions.assertThat(wdResponse.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
 
@@ -96,9 +103,9 @@ class WalletApplicationTests {
 
     @Test
     public void walletAfterWithdraw() throws ServiceException {
-        WalletEntity baseWallet = walletService.getWalletByName("Asanpardakht");
-        walletService.withdraw(new WithdrawDepositRequest(generateID(), 525L), jwtService.getAllClaimsFromToken(token));
-        WalletEntity walletAfterDeposit = walletService.getWalletByName("Asanpardakht");
+        WalletEntity baseWallet = walletService.getWalletsByUsername("Asanpardakht").get(0);
+        walletService.withdraw(new WithdrawDepositRequest(walletId , generateID(), 525L), jwtService.getAllClaimsFromToken(token));
+        WalletEntity walletAfterDeposit = walletService.getWalletsByUsername("Asanpardakht").get(0);
         Assertions.assertThat(walletAfterDeposit.getBalance()).isEqualTo(baseWallet.getBalance() - 525L);
     }
 
