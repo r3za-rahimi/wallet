@@ -46,9 +46,6 @@ public class MockServiceTest {
         WalletEntity wallet = WalletEntity.builder().userName("AsanPardakht").build();
 
         Mockito.when(walletService.createWallet(Mockito.any())).thenReturn(wallet);
-//        when(walletService.createWallet("MAr")).thenReturn(new WalletEntity(500L , "MAr" , new ArrayList<>()));
-//        when(walletService.deposit(new WithdrawDepositRequest("trk" , 10L) ,new UserDetails())).thenReturn(new WDResponse(TrackingStatus.SUCCESS));
-//        when(walletService.withdraw(new WithdrawDepositRequest("trk" , 10L) ,new UserDetails())).thenReturn(new WDResponse(TrackingStatus.SUCCESS));
     }
 
     @Test
@@ -61,21 +58,6 @@ public class MockServiceTest {
 
 
     }
-//
-//    @Test
-//    public void walletDeposit() throws Exception {
-//
-//        WDResponse response = walletService.deposit(new WithdrawDepositRequest("trk" , 10L) , new UserDetails());
-//        Assertions.assertThat(response.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
-//
-//    }
-//
-//    @Test
-//    public void walletWithdraw() throws Exception {
-//
-//        WDResponse response = walletService.withdraw(new WithdrawDepositRequest("trk" , 10L) , new UserDetails());
-//        Assertions.assertThat(response.getStatus()).isEqualTo(TrackingStatus.SUCCESS);
-//
-//    }
+
 
 }
